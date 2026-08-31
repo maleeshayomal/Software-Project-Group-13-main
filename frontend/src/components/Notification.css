@@ -1,0 +1,883 @@
+/* ==================== NOTIFICATION SYSTEM STYLES ==================== */
+
+/* Color Variables */
+:root {
+  --primary: #6083cd;
+  --secondary: #73914e;
+  --accent: #ccdb71;
+  --alert: #f59e0b;
+  --success: #10b981;
+  --info: #3b82f6;
+  --danger: #ef4444;
+  --bg-dark: #121212;
+  --bg-card: #1e1e1e;
+  --text-main: #ffffff;
+  --text-muted: #b3b3b3;
+  --border-light: rgba(255, 255, 255, 0.1);
+  --border-dark: rgba(0, 0, 0, 0.2);
+}
+
+/* ==================== NOTIFICATION CONTAINER ==================== */
+
+.notification-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ==================== BELL ICON STYLES ==================== */
+
+.notification-bell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  color: var(--text-main);
+}
+
+.notification-bell:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(96, 131, 205, 0.2);
+}
+
+.notification-bell:active {
+  transform: scale(0.95);
+}
+
+.bell-icon {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.5;
+}
+
+/* ==================== NOTIFICATION BADGE ==================== */
+
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  background: linear-gradient(135deg, var(--alert) 0%, var(--danger) 100%);
+  border: 2px solid var(--bg-dark);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 2px 12px rgba(239, 68, 68, 0.4);
+  animation: badge-pulse 2s infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% {
+    box-shadow: 0 2px 12px rgba(239, 68, 68, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 2px 20px rgba(239, 68, 68, 0.6);
+    transform: scale(1.05);
+  }
+}
+
+/* ==================== NOTIFICATION PANEL ==================== */
+
+.notification-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 12px;
+  width: 420px;
+  max-height: 600px;
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(30, 30, 30, 0.8) 100%);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(96, 131, 205, 0.1);
+  backdrop-filter: blur(20px);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ==================== NOTIFICATION HEADER ==================== */
+
+.notification-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-light);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.header-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-badge {
+  display: flex;
+  align-items: center;
+}
+
+.unread-count {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(96, 131, 205, 0.2);
+  border: 1px solid rgba(96, 131, 205, 0.3);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--text-muted);
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+}
+
+.control-icon {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+.settings-btn:hover {
+  background: rgba(204, 219, 113, 0.1);
+  color: var(--accent);
+}
+
+.close-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+/* ==================== NOTIFICATIONS LIST ==================== */
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 200px;
+}
+
+.notifications-scroll {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex: 1;
+  padding: 8px;
+}
+
+.notifications-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notifications-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.notifications-scroll::-webkit-scrollbar-thumb {
+  background: rgba(96, 131, 205, 0.3);
+  border-radius: 3px;
+}
+
+.notifications-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(96, 131, 205, 0.5);
+}
+
+/* ==================== EMPTY STATE ==================== */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 12px;
+  color: rgba(255, 255, 255, 0.2);
+  stroke-width: 1.5;
+}
+
+.empty-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0 0 4px 0;
+}
+
+.empty-subtext {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ==================== NOTIFICATION ITEM ==================== */
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.notification-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+.notification-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.notification-item.unread {
+  background: rgba(96, 131, 205, 0.1);
+  border-color: rgba(96, 131, 205, 0.2);
+}
+
+/* ==================== NOTIFICATION TYPE COLORS ==================== */
+
+.notification-alert {
+  border-left: 3px solid var(--alert);
+}
+
+.notification-alert .icon-bg {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--alert);
+}
+
+.notification-alert:hover {
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+}
+
+.notification-success {
+  border-left: 3px solid var(--success);
+}
+
+.notification-success .icon-bg {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+}
+
+.notification-success:hover {
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
+}
+
+.notification-info {
+  border-left: 3px solid var(--info);
+}
+
+.notification-info .icon-bg {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--info);
+}
+
+.notification-info:hover {
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
+}
+
+.notification-default {
+  border-left: 3px solid var(--text-muted);
+}
+
+.notification-default .icon-bg {
+  background: rgba(179, 179, 179, 0.1);
+  color: var(--text-muted);
+}
+
+/* ==================== NOTIFICATION ICON ==================== */
+
+.notification-icon-wrapper {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.icon-bg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.notification-item:hover .icon-bg {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+/* ==================== NOTIFICATION CONTENT ==================== */
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+  padding-right: 8px;
+}
+
+.notification-header-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.notification-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  flex: 1;
+  word-wrap: break-word;
+}
+
+.unread-indicator {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border-radius: 50%;
+  animation: unread-pulse 2s infinite;
+}
+
+@keyframes unread-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+.notification-message {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 4px 0;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.notification-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-light);
+}
+
+.detail-item {
+  display: flex;
+  gap: 6px;
+  font-size: 0.8rem;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: var(--accent);
+  min-width: 45px;
+}
+
+.detail-value {
+  color: var(--text-muted);
+  word-break: break-word;
+}
+
+.notification-time {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 4px;
+}
+
+/* ==================== DELETE BUTTON ==================== */
+
+.delete-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(239, 68, 68, 0.1);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: rgba(239, 68, 68, 0.6);
+  position: relative;
+  z-index: 2;
+}
+
+.delete-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+}
+
+.delete-icon {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.5;
+}
+
+/* ==================== PREFERENCES PANEL ==================== */
+
+.preferences-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.preferences-header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.preferences-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 4px 0;
+}
+
+.preferences-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.preferences-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ==================== PREFERENCES SECTION ==================== */
+
+.preferences-section {
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.preferences-section:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.section-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.alert-icon {
+  color: var(--alert);
+}
+
+.success-icon {
+  color: var(--success);
+}
+
+.info-icon {
+  color: var(--info);
+}
+
+.section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  flex: 1;
+}
+
+.subscription-count {
+  display: inline-block;
+  padding: 2px 8px;
+  background: rgba(96, 131, 205, 0.2);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* ==================== FORM STYLES ==================== */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.form-select {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.form-select:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 12px rgba(96, 131, 205, 0.3);
+  background: rgba(96, 131, 205, 0.05);
+}
+
+.form-select option {
+  background: var(--bg-dark);
+  color: var(--text-main);
+}
+
+/* ==================== SUBSCRIBE BUTTON ==================== */
+
+.subscribe-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.subscribe-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+  transition: left 0.5s ease;
+}
+
+.subscribe-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(96, 131, 205, 0.4);
+}
+
+.subscribe-btn:hover::before {
+  left: 100%;
+}
+
+.subscribe-btn:active {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  display: inline-block;
+}
+
+/* ==================== CHECKBOX STYLES ==================== */
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.checkbox-label:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.checkbox-input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+
+.checkbox-text {
+  flex: 1;
+}
+
+/* ==================== SUBSCRIPTIONS LIST ==================== */
+
+.subscriptions-section {
+  margin-top: 4px;
+}
+
+.empty-subscriptions {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 8px;
+  text-align: center;
+  margin: 0;
+}
+
+.subscriptions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.subscription-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px;
+  background: rgba(204, 219, 113, 0.05);
+  border: 1px solid rgba(204, 219, 113, 0.15);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.subscription-item:hover {
+  background: rgba(204, 219, 113, 0.1);
+  border-color: rgba(204, 219, 113, 0.3);
+  box-shadow: 0 2px 8px rgba(204, 219, 113, 0.1);
+}
+
+.subscription-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.subscription-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.detail-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  background: rgba(96, 131, 205, 0.2);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.unsubscribe-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: rgba(239, 68, 68, 0.1);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: rgba(239, 68, 68, 0.6);
+}
+
+.unsubscribe-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+}
+
+.btn-icon-small {
+  width: 12px;
+  height: 12px;
+  stroke-width: 2.5;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+@media (max-width: 768px) {
+  .notification-panel {
+    width: calc(100vw - 32px);
+    max-height: calc(100vh - 120px);
+    right: 16px;
+  }
+
+  .preferences-panel {
+    max-height: 400px;
+  }
+
+  .notification-item {
+    gap: 10px;
+  }
+
+  .notification-title {
+    font-size: 0.9rem;
+  }
+
+  .notification-message {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .notification-panel {
+    width: calc(100vw - 16px);
+    max-width: 380px;
+    right: 8px;
+  }
+
+  .header-title {
+    font-size: 1rem;
+  }
+
+  .notification-item {
+    flex-direction: column;
+  }
+
+  .notification-content {
+    width: 100%;
+    padding-right: 0;
+  }
+}
+
+/* ==================== ANIMATIONS ==================== */
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==================== PRINT STYLES ==================== */
+
+@media print {
+  .notification-container {
+    display: none !important;
+  }
+}
