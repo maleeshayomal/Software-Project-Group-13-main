@@ -417,6 +417,66 @@ app.post('/api/shop/purchase', async (req, res) => {
     }
 });
 
+// Shop - Complete Checkout with multiple items and customer details
+app.post('/api/shop/checkout', async (req, res) => {
+    const { items, username, customer, shippingAddress, shippingMethod, paymentMethod, orderRef, totalAmount, purchase_date, notes } = req.body;
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ error: 'Cart items are required' });
+    }
+
+    const orderDate = purchase_date || new Date().toISOString().split('T')[0];
+    const buyerUsername = username || (customer && customer.email ? customer.email : 'guest');
+    const confirmedRef = orderRef || `#YAM-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    try {
+        // Record all items in pro_shop_sales table
+        for (const item of items) {
+            await pool.query(
+                'INSERT INTO pro_shop_sales (username, product_id, product_name, quantity, price, purchase_date) VALUES (?, ?, ?, ?, ?, ?)',
+                [
+                    buyerUsername,
+                    item.id || item.product_id || null,
+                    item.name || item.product_name || 'Pro Shop Item',
+                    item.quantity || 1,
+                    item.price || 0,
+                    orderDate
+                ]
+            );
+        }
+
+        // If username is provided, attempt to look up user id and send notification
+        if (username && username !== 'guest') {
+            try {
+                const [userRows] = await pool.query('SELECT id, email FROM users WHERE username = ?', [username]);
+                if (userRows.length > 0) {
+                    const userId = userRows[0].id;
+                    const orderMessage = `Your Pro Shop order ${confirmedRef} ($${Number(totalAmount || 0).toFixed(2)}) has been placed successfully!`;
+                    
+                    // Insert into notification delivery log
+                    await pool.query(
+                        'INSERT INTO notification_delivery_log (recipient_id, notification_type, channel, delivery_status, message, timestamp) VALUES (?, ?, ?, ?, ?, ?)',
+                        [userId, 'ORDER_CONFIRMATION', 'in-app', 'sent', orderMessage, new Date()]
+                    );
+                }
+            } catch (notifErr) {
+                console.error('Note: could not send automated order notification:', notifErr.message);
+            }
+        }
+
+        res.status(201).json({
+            success: true,
+            orderRef: confirmedRef,
+            message: 'Order processed successfully!',
+            totalAmount: Number(totalAmount || 0),
+            itemsCount: items.length
+        });
+    } catch (error) {
+        console.error('Error processing checkout:', error);
+        res.status(500).json({ error: 'Internal server error processing checkout' });
+    }
+});
+
 // ========== NOTIFICATION SYSTEM ENDPOINTS ==========
 
 // Create notification tables if not already created

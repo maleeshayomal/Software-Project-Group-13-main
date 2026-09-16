@@ -176,11 +176,22 @@ const productsData = [
 
 const categories = ['All', 'Rackets', 'Shuttles', 'Footwear', 'Apparel', 'Accessories', 'Training'];
 
-const ShopPage = ({ user, onLoginClick }) => {
+const ShopPage = ({ 
+  user, 
+  onLoginClick, 
+  onNavigate,
+  cart: externalCart,
+  setCart: externalSetCart,
+  addToCart: externalAddToCart,
+  updateQuantity: externalUpdateQuantity,
+  removeFromCart: externalRemoveFromCart
+}) => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('featured');
-  const [cart, setCart] = useState([]);
+  const [localCart, setLocalCart] = useState([]);
+  const cart = externalCart !== undefined ? externalCart : localCart;
+  const setCart = externalSetCart || setLocalCart;
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [checkoutStep, setCheckoutStep] = useState('cart'); // 'cart' | 'success'
@@ -220,34 +231,44 @@ const ShopPage = ({ user, onLoginClick }) => {
 
   // Cart helper functions
   const addToCart = (product, qty = 1) => {
-    setCart(prevCart => {
-      const existing = prevCart.find(item => item.id === product.id);
-      if (existing) {
-        return prevCart.map(item => 
-          item.id === product.id ? { ...item, quantity: item.quantity + qty } : item
-        );
-      }
-      return [...prevCart, { ...product, quantity: qty }];
-    });
-    
-    // Show celebratory notification toast
-    showToast(`${qty}x ${product.name} added to cart!`, 'success');
+    if (externalAddToCart) {
+      externalAddToCart(product, qty);
+    } else {
+      setCart(prevCart => {
+        const existing = prevCart.find(item => item.id === product.id);
+        if (existing) {
+          return prevCart.map(item => 
+            item.id === product.id ? { ...item, quantity: item.quantity + qty } : item
+          );
+        }
+        return [...prevCart, { ...product, quantity: qty }];
+      });
+      showToast(`${qty}x ${product.name} added to cart!`, 'success');
+    }
   };
 
   const updateQuantity = (id, delta) => {
-    setCart(prevCart => {
-      return prevCart.map(item => {
-        if (item.id === id) {
-          const newQty = item.quantity + delta;
-          return newQty > 0 ? { ...item, quantity: newQty } : null;
-        }
-        return item;
-      }).filter(Boolean);
-    });
+    if (externalUpdateQuantity) {
+      externalUpdateQuantity(id, delta);
+    } else {
+      setCart(prevCart => {
+        return prevCart.map(item => {
+          if (item.id === id) {
+            const newQty = item.quantity + delta;
+            return newQty > 0 ? { ...item, quantity: newQty } : null;
+          }
+          return item;
+        }).filter(Boolean);
+      });
+    }
   };
 
   const removeFromCart = (id) => {
-    setCart(prevCart => prevCart.filter(item => item.id !== id));
+    if (externalRemoveFromCart) {
+      externalRemoveFromCart(id);
+    } else {
+      setCart(prevCart => prevCart.filter(item => item.id !== id));
+    }
   };
 
   const cartTotalCount = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -258,7 +279,14 @@ const ShopPage = ({ user, onLoginClick }) => {
   const handleCheckout = async () => {
     if (cart.length === 0) return;
 
-    // Check if user is logged in
+    // If navigation is provided, navigate directly to dedicated Checkout Page
+    if (onNavigate) {
+      setIsCartOpen(false);
+      onNavigate('checkout');
+      return;
+    }
+
+    // Fallback for standalone mode: Check if user is logged in
     if (!user) {
       showToast('Please log in or register to place your order.', 'error');
       if (onLoginClick) {
@@ -605,16 +633,14 @@ const ShopPage = ({ user, onLoginClick }) => {
                       <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        style={user ? styles.checkoutBtn : styles.loginCheckoutBtn}
+                        style={styles.checkoutBtn}
                         onClick={handleCheckout}
                         disabled={isSubmittingOrder}
                       >
                         {isSubmittingOrder ? (
                           'Placing Order...'
-                        ) : user ? (
-                          <>Proceed to Secure Checkout <FaArrowRight /></>
                         ) : (
-                          <><FaLock style={{ fontSize: '0.9rem' }} /> Log In to Place Order <FaArrowRight /></>
+                          <>Proceed to Secure Checkout <FaArrowRight /></>
                         )}
                       </motion.button>
                     </div>
@@ -1436,4 +1462,5 @@ const styles = {
   }
 };
 
+export { productsData };
 export default ShopPage;

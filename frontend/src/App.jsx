@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import GlobalBackground from './components/GlobalBackground';
 import Hero from './components/Hero';
@@ -11,6 +11,7 @@ import ContactUs from './components/ContactUs';
 import Footer from './components/Footer';
 import AccountPage from './components/AccountPage';
 import ShopPage from './components/ShopPage';
+import CheckoutPage from './components/CheckoutPage';
 import TrainingTournamentsPage from './components/TrainingTournamentsPage';
 import CourtBookingPage from './components/CourtBookingPage';
 import { NotificationProvider } from './components/Notification';
@@ -20,7 +21,60 @@ function App() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [user, setUser] = useState(null);
-  const [currentView, setCurrentView] = useState('home'); // 'home' | 'account' | 'shop' | 'training' | 'court-booking' | 'admin'
+  const [currentView, setCurrentView] = useState('home'); // 'home' | 'account' | 'shop' | 'checkout' | 'training' | 'court-booking' | 'admin'
+
+  // Centralized cart state with localStorage persistence
+  const [cart, setCart] = useState(() => {
+    try {
+      const savedCart = localStorage.getItem('yamundra_pro_cart');
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (e) {
+      console.error('Failed to load cart from storage:', e);
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('yamundra_pro_cart', JSON.stringify(cart));
+    } catch (e) {
+      console.error('Failed to persist cart to storage:', e);
+    }
+  }, [cart]);
+
+  const addToCart = (product, qty = 1) => {
+    setCart((prevCart) => {
+      const existing = prevCart.find((item) => item.id === product.id);
+      if (existing) {
+        return prevCart.map((item) =>
+          item.id === product.id ? { ...item, quantity: item.quantity + qty } : item
+        );
+      }
+      return [...prevCart, { ...product, quantity: qty }];
+    });
+  };
+
+  const updateQuantity = (id, delta) => {
+    setCart((prevCart) => {
+      return prevCart
+        .map((item) => {
+          if (item.id === id) {
+            const newQty = item.quantity + delta;
+            return newQty > 0 ? { ...item, quantity: newQty } : null;
+          }
+          return item;
+        })
+        .filter(Boolean);
+    });
+  };
+
+  const removeFromCart = (id) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
 
   const openLogin = () => {
     setIsRegisterOpen(false);
@@ -60,13 +114,14 @@ function App() {
       <>
         {currentView !== 'admin' && <GlobalBackground />}
         {currentView !== 'admin' && (
-        <Navbar 
-          onLoginClick={openLogin} 
-          user={user} 
-          onLogout={handleLogout} 
-          onNavigate={navigateTo} 
-          currentView={currentView}
-        />
+          <Navbar 
+            onLoginClick={openLogin} 
+            user={user} 
+            onLogout={handleLogout} 
+            onNavigate={navigateTo} 
+            currentView={currentView}
+            cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
+          />
         )}
         
         {currentView === 'home' && (
@@ -90,7 +145,29 @@ function App() {
         )}
 
         {currentView === 'shop' && (
-          <ShopPage user={user} onLoginClick={openLogin} />
+          <ShopPage 
+            user={user} 
+            onLoginClick={openLogin} 
+            onNavigate={navigateTo}
+            cart={cart}
+            setCart={setCart}
+            addToCart={addToCart}
+            updateQuantity={updateQuantity}
+            removeFromCart={removeFromCart}
+          />
+        )}
+
+        {currentView === 'checkout' && (
+          <CheckoutPage 
+            cart={cart}
+            setCart={setCart}
+            user={user}
+            onLoginClick={openLogin}
+            onNavigate={navigateTo}
+            updateQuantity={updateQuantity}
+            removeFromCart={removeFromCart}
+            clearCart={clearCart}
+          />
         )}
 
         {currentView === 'training' && (

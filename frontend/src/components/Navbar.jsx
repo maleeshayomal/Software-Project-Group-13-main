@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaBars } from 'react-icons/fa';
+import { FaBars, FaShoppingCart } from 'react-icons/fa';
 import logoImg from '../assets/logo.png';
 import NotificationCenter from './Notification';
 
-const Navbar = ({ onLoginClick, user, onLogout, onNavigate, currentView = 'home' }) => {
+const Navbar = ({ onLoginClick, user, onLogout, onNavigate, currentView = 'home', cartCount = 0 }) => {
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -218,6 +218,26 @@ const Navbar = ({ onLoginClick, user, onLogout, onNavigate, currentView = 'home'
         )}
 
         <div style={styles.authContainer}>
+          {/* Pro Shop Cart Quick Navigation Button */}
+          <motion.button
+            style={styles.cartIconBtn}
+            onClick={() => handleNavClick(cartCount > 0 ? 'checkout' : 'shop')}
+            whileHover={{ scale: 1.08, backgroundColor: 'rgba(255, 255, 255, 0.14)' }}
+            whileTap={{ scale: 0.92 }}
+            title={cartCount > 0 ? `View Bag & Checkout (${cartCount} items)` : 'Visit Pro Shop'}
+          >
+            <FaShoppingCart style={{ fontSize: '1.15rem', color: currentView === 'checkout' ? 'var(--accent)' : '#fff' }} />
+            {cartCount > 0 && (
+              <motion.span 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                style={styles.cartNavBadge}
+              >
+                {cartCount}
+              </motion.span>
+            )}
+          </motion.button>
+
           {user && <NotificationCenter />}
           {user ? (
             <div style={styles.userMenu}>
@@ -471,6 +491,37 @@ const styles = {
     boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
     display: 'flex',
     flexDirection: 'column',
+  },
+  cartIconBtn: {
+    position: 'relative',
+    background: 'rgba(255, 255, 255, 0.08)',
+    border: '1px solid rgba(255, 255, 255, 0.15)',
+    borderRadius: '50%',
+    width: '40px',
+    height: '40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    color: '#fff',
+    transition: 'background-color 0.2s, transform 0.2s',
+  },
+  cartNavBadge: {
+    position: 'absolute',
+    top: '-4px',
+    right: '-4px',
+    backgroundColor: 'var(--accent)',
+    color: '#000',
+    fontSize: '0.72rem',
+    fontWeight: 800,
+    minWidth: '18px',
+    height: '18px',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '0 3px',
+    boxShadow: '0 0 8px rgba(204, 219, 113, 0.6)'
   }
 };
 
